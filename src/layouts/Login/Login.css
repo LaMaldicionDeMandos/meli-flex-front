@@ -1,0 +1,23 @@
+.login-panel {
+  padding-top: 15rem;
+  padding-bottom: 15rem;
+}
+
+.login-card-header {
+  padding: 0 0 200px !important;
+}
+
+.login-card-title {
+  color: white !important;
+  position: absolute;
+  font-size: 5em;
+  font-weight: bolder;
+  font-family: Poppins;
+  margin-top: 1rem;
+  z-index: 1;
+}
+
+img.login-img {
+  position: absolute;
+  width: 100%;
+}

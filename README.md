@@ -1,2 +1,2 @@
-# meli-flex-front
-Prueba de concepto de delivery service con mercado flex
+# medika-admin
+Dashboard para admins
