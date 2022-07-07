@@ -31,8 +31,6 @@ import routes from "routes.js";
 import logo from "assets/img/react-logo.png";
 import { BackgroundColorContext } from "contexts/BackgroundColorContext";
 
-import sessionService from '../../services/session.service';
-
 var ps;
 
 function Admin(props) {
@@ -41,12 +39,6 @@ function Admin(props) {
   const [sidebarOpened, setsidebarOpened] = React.useState(
     document.documentElement.className.indexOf("nav-open") !== -1
   );
-
-  const [ready, setReady] = useState(false);
-
-  useLayoutEffect(() => {
-    sessionService.refreshToken().then(() => setReady(true));
-  }, []);
 
   React.useEffect(() => {
     if (navigator.platform.indexOf("Win") > -1) {
@@ -116,7 +108,6 @@ function Admin(props) {
     <BackgroundColorContext.Consumer>
       {({ color, changeColor }) => (
         <React.Fragment>
-          {ready ?
             (<div className="wrapper">
             <Sidebar
               routes={routes}
@@ -137,12 +128,9 @@ function Admin(props) {
                 {getRoutes(routes)}
                 <Redirect from="*" to="/admin/dashboard" />
               </Switch>
-              {
-                // we don't want the Footer to be rendered on map page
-                location.pathname === "/admin/maps" ? null : <Footer fluid />
-              }
+              <Footer fluid />
             </div>
-          </div>) : ''}
+          </div>
           <FixedPlugin bgColor={color} handleBgClick={changeColor} />
         </React.Fragment>
       )}

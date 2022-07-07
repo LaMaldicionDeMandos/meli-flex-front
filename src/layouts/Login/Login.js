@@ -15,10 +15,7 @@
 * The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
 
 */
-import React, { useState } from "react";
-import { useForm } from "react-hook-form";
-import { useHistory } from "react-router-dom";
-import sessionService from "../../services/session.service";
+import React  from "react";
 
 import { BackgroundColorContext } from "contexts/BackgroundColorContext";
 import {
@@ -28,44 +25,19 @@ import {
   CardFooter,
   CardHeader,
   Col,
-  InputGroup,
-  InputGroupText,
   Row
 } from "reactstrap";
 
 import './Login.css';
+const MELI_APP_ID = process.env.REACT_APP_MELI_APP_ID;
+const MELI_REDIRECT_URL = process.env.REACT_APP_MELI_REDIRECT_URL;
+const MELI_LOGIN_URL = `https://auth.mercadolibre.com.ar/authorization?response_type=code&client_id=${MELI_APP_ID}&redirect_uri=${MELI_REDIRECT_URL}`;
+
 
 function Login() {
   const mainPanelRef = React.useRef(null);
 
-  const [isError, setIsError] = useState(false);
-
-  const history = useHistory();
-
-  const {
-    register,
-    handleSubmit,
-    getValues,
-    formState: { errors }
-  } = useForm();
-
-  const [focusUsername, setFocusUsername] = React.useState(false);
-  const [focusPassword, setFocusPassword] = React.useState(false);
-
-  const onSubmit = form => {
-    console.log(`Login: ${form.username} - ${form.password}`)
-    sessionService
-        .login(form.username, form.password)
-        .then(token => sessionService.getUser())
-        .then(user => {
-          history.push("/admin");
-          console.log("Login Success " + JSON.stringify(user));
-        })
-        .catch(e => {
-          console.log(`Error => ${JSON.stringify(e)}`);
-          setIsError(true);
-        });
-  };
+  const goToMeliLogin = () => window.location.replace(MELI_LOGIN_URL);
 
   return (
     <BackgroundColorContext.Consumer>
@@ -85,37 +57,10 @@ function Login() {
                       <h1 className="login-card-title">Log in</h1>
                     </CardHeader>
                     <CardBody>
-                      <InputGroup className={focusUsername ? "input-group-focus" : ""}>
-                        <InputGroupText id="username">
-                          <i className="tim-icons icon-single-02"></i>
-                        </InputGroupText>
-                        <input onFocus={() => setFocusUsername(true)}
-                               onBlur={() => setFocusUsername(false)}
-                               placeholder="User name" className="form-control" aria-describedby="username"
-                               {...register("username", {
-                                 required: true,
-                                 onChange: e => {
-                                   setIsError(false);
-                                 }
-                               })}/>
-                      </InputGroup>
-                      <InputGroup className={focusPassword ? "input-group-focus" : ""}>
-                        <InputGroupText id="password">
-                          <i className="tim-icons icon-lock-circle"></i>
-                        </InputGroupText>
-                        <input onFocus={() => setFocusPassword(true)}
-                               onBlur={() => setFocusPassword(false)}
-                               placeholder="Password" className="form-control" aria-describedby="password" type="password"
-                               {...register("password", {
-                                 required: true,
-                                 onChange: e => {
-                                   setIsError(false);
-                                 }
-                               })}/>
-                      </InputGroup>
+                      <h1>Ingresa usando tu cuenta de Mercadolibre</h1>
                     </CardBody>
                     <CardFooter>
-                      <Button className="btn-block" color="primary" type="submit" onClick={handleSubmit(onSubmit)}>
+                      <Button className="btn-block" color="primary" onClick={goToMeliLogin}>
                         Log in
                       </Button>
                     </CardFooter>

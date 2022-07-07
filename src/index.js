@@ -25,7 +25,6 @@ import "assets/scss/black-dashboard-react.scss";
 import "assets/demo/demo.css";
 import "assets/css/nucleo-icons.css";
 import "@fortawesome/fontawesome-free/css/all.min.css";
-import sessionService from './services/session.service';
 
 import ThemeContextWrapper from "./components/ThemeWrapper/ThemeWrapper";
 import BackgroundColorWrapper from "./components/BackgroundColorWrapper/BackgroundColorWrapper";
@@ -36,9 +35,9 @@ ReactDOM.render(
       <BrowserRouter>
         <Switch>
           <Route path="/admin" render={(props) =>
-              sessionService.getUser() ? <AdminLayout {...props} /> : <LoginLayout {...props} />} />
+              false ? <AdminLayout {...props} /> : <LoginLayout {...props} />} />
           <Route path="/login" render={(props) => <LoginLayout {...props} />} />
-          <Redirect from="/" to={sessionService.getUser() ? '/admin' : '/login'} />
+          <Redirect from="/" to={false ? '/admin' : '/login'} />
         </Switch>
       </BrowserRouter>
     </BackgroundColorWrapper>

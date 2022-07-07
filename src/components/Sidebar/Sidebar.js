@@ -16,7 +16,7 @@
 
 */
 /*eslint-disable*/
-import React, {useState} from "react";
+import React from "react";
 import * as _ from 'lodash';
 import { NavLink, Link, useLocation, useHistory } from "react-router-dom";
 // nodejs library to set properties for components
@@ -26,18 +26,14 @@ import { PropTypes } from "prop-types";
 import PerfectScrollbar from "perfect-scrollbar";
 
 // reactstrap components
-import { Nav, NavLink as ReactstrapNavLink } from "reactstrap";
+import { Nav } from "reactstrap";
 import {
   BackgroundColorContext,
-  backgroundColors,
 } from "contexts/BackgroundColorContext";
-
-import sessionService from '../../services/session.service';
 
 var ps;
 
 function Sidebar(props) {
-  const user = sessionService.getUser();
   const location = useLocation();
   const sidebarRef = React.useRef(null);
   // verifies if routeName is the one active (in browser input)
@@ -60,7 +56,6 @@ function Sidebar(props) {
   });
 
   const availableRouteByNav = (route) => route.name || route.icon;
-  const availableRouteByRole = (route) => !_.chain(route.roles).intersection(user?.roles).isEmpty().value();
 
   const history = useHistory();
 
@@ -129,7 +124,7 @@ function Sidebar(props) {
               </div>
             ) : null}
             <Nav>
-              {_.chain(routes).filter(availableRouteByNav).filter(availableRouteByRole).map((prop, key) => {
+              {_.chain(routes).filter(availableRouteByNav).map((prop, key) => {
                 if (prop.redirect) return null;
                 return (
                   <li
