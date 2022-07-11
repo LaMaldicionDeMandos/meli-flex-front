@@ -15,7 +15,7 @@
 * The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
 
 */
-import React  from "react";
+import React, {useEffect} from "react";
 
 import { BackgroundColorContext } from "contexts/BackgroundColorContext";
 import {
@@ -27,17 +27,39 @@ import {
   Col,
   Row
 } from "reactstrap";
+import {useHistory} from "react-router-dom";
+
+import sessionService from '../../services/session.service';
 
 import './Login.css';
-const MELI_APP_ID = process.env.REACT_APP_MELI_APP_ID;
-const MELI_REDIRECT_URL = process.env.REACT_APP_MELI_REDIRECT_URL;
-const MELI_LOGIN_URL = `https://auth.mercadolibre.com.ar/authorization?response_type=code&client_id=${MELI_APP_ID}&redirect_uri=${MELI_REDIRECT_URL}`;
+import {useLocation} from "react-router-dom";
 
+function useQuery() {
+  const { search } = useLocation();
+  return React.useMemo(() => new URLSearchParams(search), [search]);
+}
 
 function Login() {
   const mainPanelRef = React.useRef(null);
 
-  const goToMeliLogin = () => window.location.replace(MELI_LOGIN_URL);
+  const sesscionCode = useQuery().get('code');
+
+  const history = useHistory();
+
+  const goToMeliLogin = () => sessionService.requestAccessCode();
+
+  useEffect(() => {
+    if (sesscionCode) {
+      console.log('Session code: ' + sesscionCode);
+      sessionService.requestAccessToken(sesscionCode)
+        .then(() => {
+          history.push('/admin');
+        })
+        .catch(e => {
+          console.log(e);
+        });
+    }
+  }, []);
 
   return (
     <BackgroundColorContext.Consumer>

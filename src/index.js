@@ -29,15 +29,17 @@ import "@fortawesome/fontawesome-free/css/all.min.css";
 import ThemeContextWrapper from "./components/ThemeWrapper/ThemeWrapper";
 import BackgroundColorWrapper from "./components/BackgroundColorWrapper/BackgroundColorWrapper";
 
+import sessionService from './services/session.service';
+
 ReactDOM.render(
   <ThemeContextWrapper>
     <BackgroundColorWrapper>
       <BrowserRouter>
         <Switch>
           <Route path="/admin" render={(props) =>
-              false ? <AdminLayout {...props} /> : <LoginLayout {...props} />} />
+              sessionService.getToken() ? <AdminLayout {...props} /> : <LoginLayout {...props} />} />
           <Route path="/login" render={(props) => <LoginLayout {...props} />} />
-          <Redirect from="/" to={false ? '/admin' : '/login'} />
+          <Redirect from="/" to={sessionService.getToken() ? '/dashboard' : '/login'} />
         </Switch>
       </BrowserRouter>
     </BackgroundColorWrapper>
