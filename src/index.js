@@ -39,7 +39,7 @@ ReactDOM.render(
           <Route path="/admin" render={(props) =>
               sessionService.getToken() ? <AdminLayout {...props} /> : <LoginLayout {...props} />} />
           <Route path="/login" render={(props) => <LoginLayout {...props} />} />
-          <Redirect from="/" to={sessionService.getToken() ? '/dashboard' : '/login'} />
+          <Redirect from="/" to={sessionService.getToken() ? '/admin' : '/login'} />
         </Switch>
       </BrowserRouter>
     </BackgroundColorWrapper>

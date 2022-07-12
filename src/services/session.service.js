@@ -1,18 +1,16 @@
 import axios from 'axios';
+import * as _ from 'lodash';
 
+const API_URL = process.env.REACT_APP_API_URL;
 const MELI_APP_ID = process.env.REACT_APP_MELI_APP_ID;
 const MELI_REDIRECT_URL = process.env.REACT_APP_MELI_REDIRECT_URL;
 const MELI_LOGIN_URL = `https://auth.mercadolibre.com.ar/authorization?response_type=code&client_id=${MELI_APP_ID}&redirect_uri=${MELI_REDIRECT_URL}`;
-const MELI_ACCESS_TOKEN_URL = 'https://api.mercadolibre.com/oauth/token';
 
-const GRANT_TYPE = 'authorization_code';
-
-const MELI_SECRET = process.env.REACT_APP_MELI_SECRET;
-
-const HEADERS = {
-  accept: "application/json",
-  "content-type": "application/x-www-form-urlencoded"
-};
+const HEADERS = (headers = {}) => _.assign({
+  Accept: "application/json",
+  "Access-Control-Allow-Origin": "*",
+  "Access-Control-Allow-Headers": "Origin, X-Requested-With, Content-Type, Accept, Authorization"
+}, headers);
 
 class SessionService {
 
@@ -22,10 +20,9 @@ class SessionService {
 
   requestAccessToken(code) {
     const p = axios
-      .post(
-        `${MELI_ACCESS_TOKEN_URL}?grant_type=${GRANT_TYPE}&client_id=${MELI_APP_ID}&client_secret=${MELI_SECRET}&code=${code}&redirect_uri=${MELI_REDIRECT_URL}`,
-        {},
-        { headers: HEADERS }
+      .post( `${API_URL}/session/accessToken`,
+        {code: code},
+        { headers: HEADERS() }
       )
       .then(response => response.data);
     return this.#receiveAccessToken(p).catch(e => Promise.reject(e.response.data));
