@@ -16,7 +16,7 @@
 
 */
 import React, {useLayoutEffect, useState} from "react";
-import { Route, Switch, Redirect, useLocation } from "react-router-dom";
+import { Route, Switch, Redirect, useLocation, useHistory } from "react-router-dom";
 // javascript plugin used to create scrollbars on windows
 import PerfectScrollbar from "perfect-scrollbar";
 
@@ -30,6 +30,8 @@ import routes from "routes.js";
 import logo from "assets/img/react-logo.png";
 import { BackgroundColorContext } from "contexts/BackgroundColorContext";
 
+import sessionService from '../../services/session.service';
+
 var ps;
 
 function Admin(props) {
@@ -38,6 +40,19 @@ function Admin(props) {
   const [sidebarOpened, setsidebarOpened] = React.useState(
     document.documentElement.className.indexOf("nav-open") !== -1
   );
+
+  const [ready, setReady] = useState(false);
+
+  const history = useHistory();
+
+  React.useEffect(() => {
+    sessionService.refreshAccessToken().then((r) => {
+      if (r) setReady(true);
+      else history.push('/login');
+    }).catch(() => {
+      history.push('/login');
+    });
+  }, []);
 
   React.useEffect(() => {
     if (navigator.platform.indexOf("Win") > -1) {

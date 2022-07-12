@@ -28,8 +28,26 @@ class SessionService {
     return this.#receiveAccessToken(p).catch(e => Promise.reject(e.response.data));
   }
 
+  refreshAccessToken() {
+    const accessToken = this.getToken();
+    if (accessToken) {
+      const p = axios
+        .post(`${API_URL}/session/refreshToken`,
+          {refresh_token: this.#getRefreshToken()},
+          {headers: HEADERS()}
+        )
+        .then(response => response.data);
+      return this.#receiveAccessToken(p).catch(e => {
+        window.localStorage.removeItem('token');
+        window.localStorage.removeItem('refresh_token');
+        return Promise.reject(e.response.data);
+      });
+    } else return Promise.resolve(false);
+  }
+
   getToken = () => {
-    return window.localStorage.getItem("token");
+    const token = window.localStorage.getItem("token");
+    return token;
   };
 
   #receiveAccessToken = (p) => {
@@ -41,8 +59,12 @@ class SessionService {
 
   #setToken = response => {
     window.localStorage.setItem("token", response.access_token);
+    window.localStorage.setItem('refresh_token', response.refresh_token);
     return response.access_token;
   };
+
+  #getRefreshToken = () => window.localStorage.getItem('refresh_token');
+
 }
 
 const service = new SessionService();
