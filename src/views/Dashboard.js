@@ -15,23 +15,65 @@
 * The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
 
 */
-import React  from "react";
+import React, {useEffect, useState} from "react";
+import * as _ from 'lodash';
+
+import ordersService from '../services/orders.service';
 
 // reactstrap components
 import {
   Row,
-  Col
+  Col, Card, CardHeader, CardBody, Table
 } from "reactstrap";
 
 function Dashboard() {
+  const [orders, setOrders] = useState([]);
+  useEffect(() => {
+    ordersService.findOrders()
+      .then(orders => {
+        console.log('Orders: ' + JSON.stringify(orders));
+        setOrders(orders);
+      })
+  }, []);
+
+  const fields = _.map([], (admin) =>
+    (
+      <tr key={admin._id}>
+        <td>{admin.username}</td>
+        <td>{`${admin.profile?.firstName || ''} ${admin.profile?.lastName || ''}`}</td>
+        <td><button className="btn-sm btn-link btn-icon btn-simple btn-danger" onClick={() => {}}><i className="zmdi zmdi-delete"></i></button></td>
+      </tr>));
+
   return (
-    <>
-      <div className="content">
-        <Row>
-          <Col lg="12"><h1>Dashboard</h1></Col>
-        </Row>
-      </div>
-    </>
+    <div className="content">
+      <Row>
+        <Col md="12">
+          <Card>
+            <CardHeader>
+              <h5 className="title">Ventas</h5>
+            </CardHeader>
+            <CardBody className="all-icons">
+              <Row>
+                <Col className="col-12">
+                  <Table className="tablesorter" responsive>
+                    <thead className="text-primary">
+                    <tr>
+                      <th>Usuario</th>
+                      <th>Nombre</th>
+                      <th>Eliminar</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {fields}
+                    </tbody>
+                  </Table>
+                </Col>
+              </Row>
+            </CardBody>
+          </Card>
+        </Col>
+      </Row>
+    </div>
   );
 }
 
