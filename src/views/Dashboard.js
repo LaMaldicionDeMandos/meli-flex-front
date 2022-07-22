@@ -36,13 +36,16 @@ function Dashboard() {
       })
   }, []);
 
-  const fields = _.map([], (admin) =>
-    (
-      <tr key={admin._id}>
-        <td>{admin.username}</td>
-        <td>{`${admin.profile?.firstName || ''} ${admin.profile?.lastName || ''}`}</td>
-        <td><button className="btn-sm btn-link btn-icon btn-simple btn-danger" onClick={() => {}}><i className="zmdi zmdi-delete"></i></button></td>
-      </tr>));
+  const fields = _.map(orders, order => {
+    return (
+      <div key={order.id}>
+        <Row>
+          <Col className="col-12">
+            <label>#{order.id} | {order.date_created}</label>
+          </Col>
+        </Row>
+      </div>);
+  });
 
   return (
     <div className="content">
@@ -53,22 +56,7 @@ function Dashboard() {
               <h5 className="title">Ventas</h5>
             </CardHeader>
             <CardBody className="all-icons">
-              <Row>
-                <Col className="col-12">
-                  <Table className="tablesorter" responsive>
-                    <thead className="text-primary">
-                    <tr>
-                      <th>Usuario</th>
-                      <th>Nombre</th>
-                      <th>Eliminar</th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    {fields}
-                    </tbody>
-                  </Table>
-                </Col>
-              </Row>
+              {fields}
             </CardBody>
           </Card>
         </Col>
