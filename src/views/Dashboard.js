@@ -19,12 +19,13 @@ import React, {useEffect, useState} from "react";
 import * as _ from 'lodash';
 
 import ordersService from '../services/orders.service';
+import percistenceService from '../services/persistence.service';
 
 import OrderRow from "../components/OrderRow/OrderRow";
 
 function Dashboard() {
   const [orders, setOrders] = useState([]);
-  const [pack, setPack] = useState();
+  const [shippingList, setShippingList] = useState(percistenceService.getShippingList());
   useEffect(() => {
     ordersService.findOrders()
       .then(orders => {
@@ -33,8 +34,18 @@ function Dashboard() {
       })
   }, []);
 
+  const newShippingList = (order) => {
+
+  }
+
+  const addToShippingList = (order) => {
+
+  }
+
   const fields = _.map(orders, order => {
-    return <OrderRow key={order.id} order={order} pack={pack}/>;
+    const buttonText = shippingList ? 'Agregar a la lista' : 'Crear lista de envíos';
+    const handler = shippingList ? addToShippingList : newShippingList;
+    return <OrderRow key={order.id} order={order} buttonText={buttonText} buttonHandler={handler} />;
   });
 
   return (

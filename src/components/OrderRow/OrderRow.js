@@ -38,10 +38,12 @@ const SHIPPING_DATE_FORMATTER = new Intl.DateTimeFormat('es-AR', {
   month: 'long',
   day: 'numeric'})
 
-function OrderRow({order, pack}) {
+function OrderRow({order, buttonText, buttonHandler = ()=> {}}) {
   const itemList = _.map(order.order_items, (item) => {
     return (<OrderItem key={item.item.id} item={item} />);
   });
+
+
 
   return (
     <Row>
@@ -53,13 +55,22 @@ function OrderRow({order, pack}) {
           <CardBody className="all-icons">
             <Row>
               <Col md="6">
-                <label className="title_row">Entregar antes del {SHIPPING_DATE_FORMATTER.format(Date.parse(order.shipping.shipping_option.estimated_handling_limit.date))}</label>
+                <Row>
+                  <Col md="6">
+                    <label className="title_row">Entregar antes del {SHIPPING_DATE_FORMATTER.format(Date.parse(order.shipping.shipping_option.estimated_handling_limit.date))}</label>
+                  </Col>
+                  <Col md="6">
+                    <div className="text-right">
+                      <span className="sc-quantity">Costo base de envío: ${order.shipping.base_cost}</span>
+                    </div>
+                  </Col>
+                </Row>
                 <Col md="12" style={{marginTop: 16}}>
                   {itemList}
                 </Col>
               </Col>
               <Col md="2">
-                <Button className="btn btn-primary" disabled={!pack}>Agregar al paquete</Button>
+                <Button className="btn btn-primary" onClick={() => buttonHandler(order)}>{buttonText}</Button>
               </Col>
               <Col md="4">
                 <OrderBuyer order={order} />
