@@ -31,6 +31,7 @@ import logo from "assets/img/react-logo.png";
 import { BackgroundColorContext } from "contexts/BackgroundColorContext";
 
 import sessionService from '../../services/session.service';
+import FixedPlugin from "../../components/FixedPlugin/FixedPlugin";
 
 var ps;
 
@@ -122,7 +123,7 @@ function Admin(props) {
     <BackgroundColorContext.Consumer>
       {({ color, changeColor }) => (
         <React.Fragment>
-            (<div className="wrapper">
+            <div className="wrapper">
             <Sidebar
               routes={routes}
               logo={{
@@ -145,6 +146,7 @@ function Admin(props) {
               <Footer fluid />
             </div>
           </div>
+          <FixedPlugin bgColor={color} handleBgClick={changeColor} />
         </React.Fragment>
       )}
     </BackgroundColorContext.Consumer>

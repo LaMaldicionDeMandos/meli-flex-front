@@ -20,14 +20,11 @@ import * as _ from 'lodash';
 
 import ordersService from '../services/orders.service';
 
-// reactstrap components
-import {
-  Row,
-  Col, Card, CardHeader, CardBody, Table
-} from "reactstrap";
+import OrderRow from "../components/OrderRow/OrderRow";
 
 function Dashboard() {
   const [orders, setOrders] = useState([]);
+  const [pack, setPack] = useState();
   useEffect(() => {
     ordersService.findOrders()
       .then(orders => {
@@ -37,30 +34,13 @@ function Dashboard() {
   }, []);
 
   const fields = _.map(orders, order => {
-    return (
-      <div key={order.id}>
-        <Row>
-          <Col className="col-12">
-            <label>#{order.id} | {order.date_created}</label>
-          </Col>
-        </Row>
-      </div>);
+    return <OrderRow key={order.id} order={order} pack={pack}/>;
   });
 
   return (
     <div className="content">
-      <Row>
-        <Col md="12">
-          <Card>
-            <CardHeader>
-              <h5 className="title">Ventas</h5>
-            </CardHeader>
-            <CardBody className="all-icons">
-              {fields}
-            </CardBody>
-          </Card>
-        </Col>
-      </Row>
+      <h5 className="title">Envíos Pendientes</h5>
+      {fields}
     </div>
   );
 }
