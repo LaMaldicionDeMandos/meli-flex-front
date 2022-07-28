@@ -38,7 +38,7 @@ const SHIPPING_DATE_FORMATTER = new Intl.DateTimeFormat('es-AR', {
   month: 'long',
   day: 'numeric'})
 
-function OrderRow({order, buttonText, buttonHandler = ()=> {}}) {
+function OrderRow({order, children}) {
   const itemList = _.map(order.order_items, (item) => {
     return (<OrderItem key={item.item.id} item={item} />);
   });
@@ -70,7 +70,7 @@ function OrderRow({order, buttonText, buttonHandler = ()=> {}}) {
                 </Col>
               </Col>
               <Col md="2">
-                <Button className="btn btn-primary" onClick={() => buttonHandler(order)}>{buttonText}</Button>
+                {children}
               </Col>
               <Col md="4">
                 <OrderBuyer order={order} />

@@ -9,7 +9,7 @@
     "@mui/material": "^5.4.0",
     "aws-sdk": "^2.1065.0",
     "axios": "^0.24.0",
-    "bootstrap": "4.5.3",
+    "bootstrap": "^4.5.3",
     "chart.js": "2.9.4",
     "classnames": "2.2.6",
     "install": "^0.13.0",
@@ -34,7 +34,7 @@
     "react-number-format": "^4.9.1",
     "react-router-dom": "5.2.0",
     "react-scripts": "4.0.1",
-    "reactstrap": "^9.0.1",
+    "reactstrap": "^9.1.2",
     "sha256": "^0.2.0"
   },
   "scripts": {
