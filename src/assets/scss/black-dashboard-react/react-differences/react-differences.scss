@@ -263,3 +263,12 @@
 .MuiSlider-markLabel {
   color: white !important;
 }
+
+.list-group .list-group-item:nth-child(odd) {
+  background-color: rgba(34,42,66,.05);
+}
+
+.list-group .list-group-item:nth-child(even) {
+  background-color: rgba(0, 0, 0, 0);
+}
+

@@ -30,7 +30,7 @@ function Footer() {
         <Nav>
           <NavItem>
             <NavLink href="#">
-              Medika Admin v: ({VERSION})
+              Happy Delivery v: ({VERSION})
             </NavLink>
           </NavItem>
           <NavItem>

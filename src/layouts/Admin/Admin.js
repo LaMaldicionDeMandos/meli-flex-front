@@ -128,7 +128,7 @@ function Admin(props) {
               routes={routes}
               logo={{
                 outterLink: "/",
-                text: "Medika Admin",
+                text: "Happy Delivery",
                 imgSrc: logo,
               }}
               toggleSidebar={toggleSidebar}

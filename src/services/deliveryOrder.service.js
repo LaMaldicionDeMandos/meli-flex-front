@@ -7,7 +7,7 @@ class DeliveryOrderService {
   #deliveryOrders;
   newDeliveryOrder(name, order) {
     const deliveryOrders = this.getDeliveryOrders();
-    const deliveryOrder = new DeliveryOrder(name, [order]);
+    const deliveryOrder = new DeliveryOrder(name, order ? [order] : []);
     deliveryOrders.push(deliveryOrder);
     console.log(`Delivery order: {name: ${deliveryOrder.name}, orders: ${deliveryOrder.orders}}`);
     this.#save(deliveryOrders);

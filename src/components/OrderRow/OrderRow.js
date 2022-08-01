@@ -27,6 +27,7 @@ import {
 import './OrderRow.css';
 import OrderBuyer from "./OrderBuyer";
 import OrderItem from "./OrderItem";
+import currencyFormatter from '../../utils/currency.formatter';
 
 const DATE_FORMATTER = new Intl.DateTimeFormat('es-AR', {
   month: 'long',
@@ -61,7 +62,7 @@ function OrderRow({order, children}) {
                   </Col>
                   <Col md="6">
                     <div className="text-right">
-                      <span className="sc-quantity">Costo base de envío: ${order.shipping.base_cost}</span>
+                      <span className="sc-quantity">Costo base de envío: {currencyFormatter.format(order.shipping.base_cost)}</span>
                     </div>
                   </Col>
                 </Row>

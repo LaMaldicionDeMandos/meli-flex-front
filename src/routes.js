@@ -16,13 +16,21 @@
 
 */
 import Dashboard from "views/Dashboard.js";
+import DeliveryOrders from "./views/DeliveryOrders";
 
 const routes = [
   {
     path: "/dashboard",
-    name: "Dashboard",
-    icon: "tim-icons icon-chart-pie-36",
+    name: "Envíos pendientes",
+    icon: "tim-icons icon-cart",
     component: Dashboard,
+    layout: "/admin",
+  },
+  {
+    path: "/orders",
+    name: "Ordenes de reparto",
+    icon: "tim-icons icon-delivery-fast",
+    component: DeliveryOrders,
     layout: "/admin",
   }
 ];
