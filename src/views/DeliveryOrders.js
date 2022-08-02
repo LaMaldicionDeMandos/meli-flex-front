@@ -40,7 +40,7 @@ function DeliveryOrders() {
       <Row>
         <Col md="12">
           <h5 className="title">Ordenes de reparto </h5>
-          <CollapsePanel header={
+          <CollapsePanel defaultState={true} header={
             (<>
                 <h5 style={{marginTop: 5, marginBottom: 5, marginLeft:10, display: 'inline-block', fontWeight: 'bold'}}>Abiertas</h5>
               </>

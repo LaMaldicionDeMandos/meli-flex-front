@@ -40,6 +40,7 @@ class SessionService {
       return this.#receiveAccessToken(p).catch(e => {
         window.localStorage.removeItem('token');
         window.localStorage.removeItem('refresh_token');
+        window.localStorage.removeItem('user');
         return Promise.reject(e.response.data);
       });
     } else return Promise.resolve(false);
@@ -50,11 +51,20 @@ class SessionService {
     return token;
   };
 
+  getUserId = () => {
+    const userId = window.localStorage.getItem("user");
+    return userId;
+  }
+
   #receiveAccessToken = (p) => {
     return p.then(response => {
       console.log(`Token info: ${JSON.stringify(response)}`);
       return response;
-    }).then(this.#setToken)
+    }).then((response) => {
+      this.#setUser(response);
+      return this.#setToken(response);
+
+    })
   }
 
   #setToken = response => {
@@ -62,6 +72,10 @@ class SessionService {
     window.localStorage.setItem('refresh_token', response.refresh_token);
     return response.access_token;
   };
+
+  #setUser = response => {
+    window.localStorage.setItem('user', response.user_id);
+  }
 
   #getRefreshToken = () => window.localStorage.getItem('refresh_token');
 

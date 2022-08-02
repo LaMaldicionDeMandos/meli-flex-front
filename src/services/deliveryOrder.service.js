@@ -39,7 +39,7 @@ class DeliveryOrderService {
 
   getDeliveryOrders() {
     if (this.#deliveryOrders) return this.#deliveryOrders;
-    const orders = map(JSON.parse(window.localStorage.getItem(DELIVERY_ORDERS_KEY)) || [], order => {
+    const orders = map(JSON.parse(window.localStorage.getItem(DELIVERY_ORDERS_KEY + sessionService.getUserId())) || [], order => {
       return new DeliveryOrder(order.name, order.orders);
     });
     this.#deliveryOrders = orders;
@@ -72,7 +72,7 @@ class DeliveryOrderService {
   }
 
   #save(deliveryOrders) {
-    window.localStorage.setItem(DELIVERY_ORDERS_KEY, JSON.stringify(deliveryOrders));
+    window.localStorage.setItem(DELIVERY_ORDERS_KEY + sessionService.getUserId(), JSON.stringify(deliveryOrders));
     this.#deliveryOrders = undefined;
   }
 }
