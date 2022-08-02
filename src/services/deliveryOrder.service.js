@@ -1,4 +1,4 @@
-import {isEmpty, map, find, first, reduce} from 'lodash';
+import {isEmpty, map, find, first, remove} from 'lodash';
 import {DeliveryOrder} from "../models/deliveryOrder";
 import axios from "axios";
 import sessionService from "./session.service";
@@ -59,12 +59,22 @@ class DeliveryOrderService {
     return deliveryOrder?.name;
   }
 
+  deleteOrderFromDeliveryList(deliveryOrderName, order) {
+    const deliveryOrder = this.deliveryOrderByName(deliveryOrderName);
+    remove(deliveryOrder.orders, (or) => order.id === or.id);
+    this.#save(this.getDeliveryOrders());
+  }
+
   calculateCost(deliveryOrder) {
    return axios.post( `${API_URL}/delivery/cost/calculation`,
       deliveryOrder,
       { headers: HEADERS({Authorization: sessionService.getToken()})}
     )
       .then(response => response.data.cost);
+  }
+
+  deliveryOrderByName(name) {
+    return find(this.getDeliveryOrders(), order => order.name === name);
   }
 
   #firstDeliveryOrder() {

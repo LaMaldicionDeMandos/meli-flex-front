@@ -32,7 +32,7 @@ const SHIPPING_DATE_FORMATTER = new Intl.DateTimeFormat('es-AR', {
   month: 'long',
   day: 'numeric'})
 
-function OrderRow({order}) {
+function OrderRow({order, deleteOrderHandler = (order) => {}}) {
   const itemList = _.map(order.order_items, (item) => {
     return (<OrderItemMin key={item.item.id} item={item} />);
   });
@@ -42,9 +42,16 @@ function OrderRow({order}) {
       <Col md="12">
         <Card style={{marginBottom: 4}}>
           <CardHeader>
-            <label className="title_row">
-              #{order.id} | Entregar antes del {SHIPPING_DATE_FORMATTER.format(Date.parse(order.shipping.shipping_option.estimated_handling_limit.date))}
-            </label>
+            <Row>
+              <Col md="6">
+                <label className="title_row">
+                  #{order.id} | Entregar antes del {SHIPPING_DATE_FORMATTER.format(Date.parse(order.shipping.shipping_option.estimated_handling_limit.date))}
+                </label>
+              </Col>
+              <Col md="6" className="text-right">
+                <button className="btn-sm btn-link btn-danger align-self-center" onClick={() => deleteOrderHandler(order)}><i className="zmdi zmdi-delete"></i></button>
+              </Col>
+            </Row>
           </CardHeader>
           <CardBody className="all-icons">
             <Row>

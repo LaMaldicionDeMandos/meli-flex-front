@@ -30,12 +30,18 @@ import deliveryOrderService from '../../services/deliveryOrder.service';
 
 function DeliveryOrder({order}) {
   const [deliveryCost, setDeliveryCost] = useState();
+  const [orders, setOrders] = useState(order.orders);
 
   useEffect(() => {
     deliveryOrderService.calculateCost(order).then(setDeliveryCost);
-  }, [order]);
+  }, [order, orders]);
 
-  const orders = map(order.orders, (order) => <OrderRowMin key={order.id} order={order} />);
+  const deleteHandler = (orderChild) => {
+    deliveryOrderService.deleteOrderFromDeliveryList(order.name, orderChild);
+    setOrders(deliveryOrderService.deliveryOrderByName(order.name).orders);
+  }
+
+  const orderList = map(orders, (order) => <OrderRowMin key={order.id} order={order} deleteOrderHandler={deleteHandler} />);
 
   return (
     <Row>
@@ -52,7 +58,7 @@ function DeliveryOrder({order}) {
         </h5>
         <Row style={{padding: 8}}>
           <Col md="12">
-            {orders}
+            {orderList}
           </Col>
         </Row>
       </Col>
