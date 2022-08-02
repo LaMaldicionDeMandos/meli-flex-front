@@ -15,29 +15,40 @@
 * The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
 
 */
-import React from "react";
+import React, {useEffect, useState} from "react";
 
 import { map, reduce } from 'lodash';
 
 // reactstrap components
 import {
   Row,
-  Col, ListGroup
+  Col
 } from "reactstrap";
 import OrderRowMin from "../OrderRow/OrderRowMin";
-import CollapsePanel from "../CollapsePanel/CollapsePanel";
 import currencyFormatter from '../../utils/currency.formatter';
+import deliveryOrderService from '../../services/deliveryOrder.service';
 
 function DeliveryOrder({order}) {
+  const [deliveryCost, setDeliveryCost] = useState();
+
+  useEffect(() => {
+    deliveryOrderService.calculateCost(order).then(setDeliveryCost);
+  }, [order]);
 
   const orders = map(order.orders, (order) => <OrderRowMin key={order.id} order={order} />);
-  const deliveryCost = reduce(order.orders, (sum, order) => sum + order.shipping.base_cost, 0);
 
   return (
     <Row>
       <Col md="12">
-        <h5 style={{marginTop: 5, marginBottom: 5, marginLeft:10, display: 'inline-block', fontWeight: 'bold'}}>
-          {order.name} Costo: {currencyFormatter.format(deliveryCost)}
+        <h5 style={{marginTop: 5, marginBottom: 5, marginLeft:10, fontWeight: 'bold'}}>
+          <Row>
+            <Col md="10">
+              <span>{order.name}</span>
+            </Col>
+            <Col md="2" className="">
+              <span className="right">{ deliveryCost ? `Costo: ${currencyFormatter.format(deliveryCost)}` : ''}</span>
+            </Col>
+          </Row>
         </h5>
         <Row style={{padding: 8}}>
           <Col md="12">

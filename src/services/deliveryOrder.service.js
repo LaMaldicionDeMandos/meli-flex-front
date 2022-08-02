@@ -1,7 +1,17 @@
-import {isEmpty, map, find, first} from 'lodash';
+import {isEmpty, map, find, first, reduce} from 'lodash';
 import {DeliveryOrder} from "../models/deliveryOrder";
+import axios from "axios";
+import sessionService from "./session.service";
+import * as _ from "lodash";
 
 const DELIVERY_ORDERS_KEY = 'delivery_orders';
+const API_URL = process.env.REACT_APP_API_URL;
+
+const HEADERS = (headers = {}) => _.assign({
+  Accept: "application/json",
+  "Access-Control-Allow-Origin": "*",
+  "Access-Control-Allow-Headers": "Origin, X-Requested-With, Content-Type, Accept, Authorization"
+}, headers);
 
 class DeliveryOrderService {
   #deliveryOrders;
@@ -47,6 +57,14 @@ class DeliveryOrderService {
   deliveryOrderNameByOrder(order) {
     const deliveryOrder = find(this.getDeliveryOrders(), (deliveryOrder) => deliveryOrder.hasOrder(order));
     return deliveryOrder?.name;
+  }
+
+  calculateCost(deliveryOrder) {
+   return axios.post( `${API_URL}/delivery/cost/calculation`,
+      deliveryOrder,
+      { headers: HEADERS({Authorization: sessionService.getToken()})}
+    )
+      .then(response => response.data.cost);
   }
 
   #firstDeliveryOrder() {
