@@ -16,7 +16,7 @@
 
 */
 
-import { map } from'lodash';
+import { map, isEmpty } from'lodash';
 import React, {useState} from "react";
 import {Col, ListGroup, ListGroupItem, Row} from "reactstrap";
 import CollapsePanel from "../components/CollapsePanel/CollapsePanel";
@@ -27,31 +27,36 @@ import DeliveryOrder from "../components/DeliveryOrder/DeliveryOrder";
 function DeliveryOrders() {
   const [deliveryOrders, setDeliveryOrders] = useState(deliveryOrderService.getDeliveryOrders());
 
+  const refreshHandler = (deliveryOrder) => {
+    setDeliveryOrders(deliveryOrderService.getDeliveryOrders());
+  }
+
   const deliveryOrdersList = map(deliveryOrders, (order, index) => {
     return (
       <ListGroupItem key={order.name + index}>
-        <DeliveryOrder  order={order} />
+        <DeliveryOrder  order={order} refreshHandler={refreshHandler} />
       </ListGroupItem>
     )
   });
 
   return (
     <div className="content">
-      <Row>
-        <Col md="12">
-          <h5 className="title">Ordenes de reparto </h5>
-          <CollapsePanel defaultState={true} header={
-            (<>
-                <h5 style={{marginTop: 5, marginBottom: 5, marginLeft:10, display: 'inline-block', fontWeight: 'bold'}}>Abiertas</h5>
-              </>
-            )
-          }>
-            <ListGroup>
-              {deliveryOrdersList}
-            </ListGroup>
-          </CollapsePanel>
-        </Col>
-      </Row>
+      { !isEmpty(deliveryOrdersList)
+        ? (<Row>
+          <Col md="12">
+            <h5 className="title">Ordenes de reparto </h5>
+            <CollapsePanel defaultState={true} header={
+              (<>
+                  <h5 style={{marginTop: 5, marginBottom: 5, marginLeft:10, display: 'inline-block', fontWeight: 'bold'}}>Abiertas</h5>
+                </>
+              )
+            }>
+              <ListGroup>
+                {deliveryOrdersList}
+              </ListGroup>
+            </CollapsePanel>
+          </Col>
+        </Row>) : ''}
     </div>
   );
 }

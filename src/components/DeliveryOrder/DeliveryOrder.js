@@ -17,18 +17,18 @@
 */
 import React, {useEffect, useState} from "react";
 
-import { map, reduce } from 'lodash';
+import { map, reduce, isEmpty } from 'lodash';
 
 // reactstrap components
 import {
   Row,
-  Col
+  Col, Button
 } from "reactstrap";
 import OrderRowMin from "../OrderRow/OrderRowMin";
 import currencyFormatter from '../../utils/currency.formatter';
 import deliveryOrderService from '../../services/deliveryOrder.service';
 
-function DeliveryOrder({order}) {
+function DeliveryOrder({order, refreshHandler = (order) => {}}) {
   const [deliveryCost, setDeliveryCost] = useState();
   const [orders, setOrders] = useState(order.orders);
 
@@ -43,16 +43,28 @@ function DeliveryOrder({order}) {
 
   const orderList = map(orders, (order) => <OrderRowMin key={order.id} order={order} deleteOrderHandler={deleteHandler} />);
 
+  const activateDeliveryOrder = () => {
+    deliveryOrderService.activateDeliveryOrder(order)
+      .then(result => {
+        if (result.ok === 'ok') {
+          refreshHandler(order);
+        }
+      });
+  }
+
   return (
     <Row>
       <Col md="12">
         <h5 style={{marginTop: 5, marginBottom: 5, marginLeft:10, fontWeight: 'bold'}}>
           <Row>
-            <Col md="10">
+            <Col md="8">
               <span>{order.name}</span>
             </Col>
             <Col md="2" className="">
               <span className="right">{ deliveryCost ? `Costo: ${currencyFormatter.format(deliveryCost)}` : ''}</span>
+            </Col>
+            <Col md="2">
+              { !isEmpty(orderList) ? <Button className="btn-round btn-sm btn-primary" onClick={activateDeliveryOrder}>Solicitar reparto</Button> : ''}
             </Col>
           </Row>
         </h5>

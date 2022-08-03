@@ -23,6 +23,14 @@ class DeliveryOrderService {
     this.#save(deliveryOrders);
   }
 
+  activateDeliveryOrder(deliveryOrder) {
+    return axios.post( `${API_URL}/delivery`,
+      deliveryOrder,
+      { headers: HEADERS({Authorization: sessionService.getToken()})}
+    )
+      .then(response => response.data);
+  }
+
   addOrder(order, deliveryOrderName) {
     const deliveryOrders = this.getDeliveryOrders();
     const deliveryOrder = deliveryOrderName
