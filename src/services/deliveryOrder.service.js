@@ -62,6 +62,12 @@ class DeliveryOrderService {
     return this.getDeliveryOrders().length === 1;
   }
 
+  deleteDeliveryOrder(order) {
+    const orders = this.getDeliveryOrders();
+    _.remove(orders, (or) => or.name === order.name);
+    this.#save(orders);
+  }
+
   deliveryOrderNameByOrder(order) {
     const deliveryOrder = find(this.getDeliveryOrders(), (deliveryOrder) => deliveryOrder.hasOrder(order));
     return deliveryOrder?.name;

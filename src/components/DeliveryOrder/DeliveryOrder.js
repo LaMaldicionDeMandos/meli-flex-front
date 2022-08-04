@@ -27,10 +27,12 @@ import {
 import OrderRowMin from "../OrderRow/OrderRowMin";
 import currencyFormatter from '../../utils/currency.formatter';
 import deliveryOrderService from '../../services/deliveryOrder.service';
+import paymentsService from '../../services/payments.service';
 
 function DeliveryOrder({order, refreshHandler = (order) => {}}) {
   const [deliveryCost, setDeliveryCost] = useState();
   const [orders, setOrders] = useState(order.orders);
+  const [showRequestButton, setShowRequestButton] = useState(true);
 
   useEffect(() => {
     deliveryOrderService.calculateCost(order).then(setDeliveryCost);
@@ -46,10 +48,15 @@ function DeliveryOrder({order, refreshHandler = (order) => {}}) {
   const activateDeliveryOrder = () => {
     deliveryOrderService.activateDeliveryOrder(order)
       .then(result => {
-        if (result.ok === 'ok') {
-          refreshHandler(order);
-        }
+        paymentsService.chackout(result.id, `#${order.name}`);
+        setShowRequestButton(false);
+        refreshHandler()
       });
+  }
+
+  const onMercadopagoClick = () => {
+    deliveryOrderService.deleteDeliveryOrder(order);
+    refreshHandler(order);
   }
 
   return (
@@ -64,7 +71,8 @@ function DeliveryOrder({order, refreshHandler = (order) => {}}) {
               <span className="right">{ deliveryCost ? `Costo: ${currencyFormatter.format(deliveryCost)}` : ''}</span>
             </Col>
             <Col md="2">
-              { !isEmpty(orderList) ? <Button className="btn-round btn-sm btn-primary" onClick={activateDeliveryOrder}>Solicitar reparto</Button> : ''}
+              <div id={order.name} style={{paddingRight: 16}} onClick={onMercadopagoClick}></div>
+              { !isEmpty(orderList) && showRequestButton ? <Button className="btn-round btn-sm btn-primary" onClick={activateDeliveryOrder}>Solicitar reparto</Button> : ''}
             </Col>
           </Row>
         </h5>
