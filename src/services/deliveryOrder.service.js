@@ -99,6 +99,13 @@ class DeliveryOrderService {
       .then(response => response.data);
   }
 
+  findAllSearching() {
+    return axios.get( `${API_URL}/delivery?status=searching`,
+      { headers: HEADERS({Authorization: sessionService.getToken()})}
+    )
+      .then(response => response.data);
+  }
+
   #firstDeliveryOrder() {
     return first(this.getDeliveryOrders());
   }
