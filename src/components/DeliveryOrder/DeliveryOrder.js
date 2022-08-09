@@ -16,8 +16,9 @@
 
 */
 import React, {useEffect, useState} from "react";
+import SweetAlert from "react-bootstrap-sweetalert";
 
-import { map, reduce, isEmpty } from 'lodash';
+import { map, isEmpty, assign, replace } from 'lodash';
 
 // reactstrap components
 import {
@@ -29,10 +30,13 @@ import currencyFormatter from '../../utils/currency.formatter';
 import deliveryOrderService from '../../services/deliveryOrder.service';
 import paymentsService from '../../services/payments.service';
 
+const DEFAULT_WAITING_MINUTES = 30;
+
 function DeliveryOrder({order, refreshHandler = (order) => {}}) {
   const [deliveryCost, setDeliveryCost] = useState();
   const [orders, setOrders] = useState(order.orders);
   const [showRequestButton, setShowRequestButton] = useState(true);
+  const [showActiveDeliveryDialog, setShowActiveDeliveryDialog] = useState(false);
 
   useEffect(() => {
     deliveryOrderService.calculateCost(order).then(setDeliveryCost);
@@ -45,10 +49,10 @@ function DeliveryOrder({order, refreshHandler = (order) => {}}) {
 
   const orderList = map(orders, (order) => <OrderRowMin key={order.id} order={order} deleteOrderHandler={deleteHandler} />);
 
-  const activateDeliveryOrder = () => {
-    deliveryOrderService.activateDeliveryOrder(order)
+  const activateDeliveryOrder = (minutes) => {
+    deliveryOrderService.activateDeliveryOrder(assign(order, {expiration_minutes: minutes}))
       .then(result => {
-        paymentsService.chackout(result.id, `#${order.name}`);
+        paymentsService.chackout(result.id, `#${replace(order.name, /[ /]/g, '')}`);
         setShowRequestButton(false);
         refreshHandler()
       });
@@ -61,6 +65,23 @@ function DeliveryOrder({order, refreshHandler = (order) => {}}) {
 
   return (
     <Row>
+      {showActiveDeliveryDialog ? <SweetAlert
+        input
+        inputType="number"
+        required={true}
+        showCancel
+        defaultValue={DEFAULT_WAITING_MINUTES}
+        title="Tiempo de espera hasta que expire la orden de reparto"
+        confirmBtnText="Confirmar"
+        confirmBtnBsStyle="primary"
+        cancelBtnText="Ahora no"
+        cancelBtnBsStyle="danger"
+        onCancel={() => setShowActiveDeliveryDialog(false)}
+        onConfirm={(minutes) => {
+          activateDeliveryOrder(minutes);
+          setShowActiveDeliveryDialog(false);
+        }}
+      >Si no encontramos un repartidor antes de que expire el tiempo, te reenbolsaremos el dinero.</SweetAlert> : ''}
       <Col md="12">
         <h5 style={{marginTop: 5, marginBottom: 5, marginLeft:10, fontWeight: 'bold'}}>
           <Row>
@@ -71,8 +92,8 @@ function DeliveryOrder({order, refreshHandler = (order) => {}}) {
               <span className="right">{ deliveryCost ? `Costo: ${currencyFormatter.format(deliveryCost)}` : ''}</span>
             </Col>
             <Col md="2">
-              <div id={order.name} style={{paddingRight: 16}} onClick={onMercadopagoClick}></div>
-              { !isEmpty(orderList) && showRequestButton ? <Button className="btn-round btn-sm btn-primary" onClick={activateDeliveryOrder}>Solicitar reparto</Button> : ''}
+              <div id={replace(order.name, /[ /]/g, '')} style={{paddingRight: 16}} onClick={onMercadopagoClick}></div>
+              { !isEmpty(orderList) && showRequestButton ? <Button className="btn-round btn-sm btn-primary" onClick={() => setShowActiveDeliveryDialog(true)}>Solicitar reparto</Button> : ''}
             </Col>
           </Row>
         </h5>

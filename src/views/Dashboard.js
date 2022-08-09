@@ -43,6 +43,7 @@ function Dashboard() {
   const notificationAlertRef = React.useRef(null);
   const [showNewDeliveryOrderDialog, setShowNewDeliveryOrderDialog] = useState(false);
   const [orders, setOrders] = useState([]);
+  const [deliveries, setDeliveries] = useState([]);
   const [deliveryOrders, setDeliveryOrders] = useState(deliveryOrderService.getDeliveryOrders());
   const [selectedOrder, setSelectedOrder] = useState();
   const [filterPacks, setFilterPacks] = useState(false);
@@ -51,12 +52,15 @@ function Dashboard() {
   const history = useHistory();
 
   useEffect(() => {
-    ordersService.findOrders()
-      .then(orders => {
-        console.log('Orders: ' + JSON.stringify(orders));
-        setOrders(orders);
+    const ordersPromise = ordersService.findOrders();
+    const deliveriesPromise = deliveryOrderService.findAll();
+    Promise.all([ordersPromise, deliveriesPromise])
+      .then(results => { return {orders: results[0], deliveries: results[1]}; })
+      .then(result => {
+        setOrders(result.orders);
+        setDeliveries(result.deliveries);
         setShowSpinner(false);
-      })
+      });
   }, []);
 
   const addToDeliveryOrder = (order, deliveryOrderName) => {
@@ -117,10 +121,22 @@ function Dashboard() {
     }
   }
 
+  const getDeliveryOrderNameByOrder = (order) => {
+    const name = deliveryOrderService.deliveryOrderNameByOrder(order) || _.chain(deliveries)
+      .find((delivery) => {
+        const orders = delivery.orders;
+        const exists = _.some(orders, o => o.id === order?.id);
+        return exists;
+    })
+      .get('name')
+      .value();
+    return name;
+  }
+
   const fields = _.chain(orders)
-    .filter((order) => !filterPacks || !deliveryOrderService.deliveryOrderNameByOrder(order))
+    .filter((order) => !filterPacks || !getDeliveryOrderNameByOrder(order))
     .map(order => {
-      const deliveryOrderName = deliveryOrderService.deliveryOrderNameByOrder(order);
+      const deliveryOrderName = getDeliveryOrderNameByOrder(order);
       const child = deliveryOrderName
         ? <label className="text-primary">Incluido en la orden de reparto <b>{deliveryOrderName}</b></label>
         : createChild(order);

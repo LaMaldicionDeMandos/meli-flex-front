@@ -47,6 +47,7 @@ class DeliveryOrderService {
 
   getDeliveryOrders() {
     if (this.#deliveryOrders) return this.#deliveryOrders;
+
     const orders = map(JSON.parse(window.localStorage.getItem(DELIVERY_ORDERS_KEY + sessionService.getUserId())) || [], order => {
       return new DeliveryOrder(order.name, order.orders);
     });
@@ -89,6 +90,13 @@ class DeliveryOrderService {
 
   deliveryOrderByName(name) {
     return find(this.getDeliveryOrders(), order => order.name === name);
+  }
+
+  findAll() {
+    return axios.get( `${API_URL}/delivery`,
+      { headers: HEADERS({Authorization: sessionService.getToken()})}
+    )
+      .then(response => response.data);
   }
 
   #firstDeliveryOrder() {
