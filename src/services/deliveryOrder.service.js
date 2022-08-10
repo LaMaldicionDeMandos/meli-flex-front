@@ -23,6 +23,13 @@ class DeliveryOrderService {
     this.#save(deliveryOrders);
   }
 
+  getDeliveryOrderStatus(id) {
+    return axios.get(`${API_URL}/delivery/${id}/status`,
+      {headers: HEADERS({Authorization: sessionService.getToken()})}
+      )
+      .then(response => response.data);
+  }
+
   activateDeliveryOrder(deliveryOrder) {
     return axios.post( `${API_URL}/delivery`,
       deliveryOrder,

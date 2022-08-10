@@ -34,8 +34,11 @@ import paymentsService from "../../services/payments.service";
 const PENDING_STATUS = 'pending';
 
 const DEFAULT_WAITING_MINUTES = 30;
+const ONE_SECOND = 1000;
+const INTERVAL_KEY = 'activeDeliveryOrderInterval';
 
 function ActiveDeliveryOrder({order}) {
+  const [orderStatus, setOrderStatus] = useState(order.status);
   const [showReActiveDeliveryDialog, setShowReActiveDeliveryDialog] = useState(false);
   const [showRequestButton, setShowRequestButton] = useState(true);
   const [waitingPayment, setWaitingPayment] = useState(false);
@@ -51,9 +54,22 @@ function ActiveDeliveryOrder({order}) {
         });
   }
 
+  const getOrderStatus = () => {
+    deliveryOrderService.getDeliveryOrderStatus(order._id)
+      .then(result => {
+        console.log(`Order status ${result.status}`);
+        setOrderStatus(result.status);
+        if (result.status === 'paid') {
+          clearInterval(Number.parseInt(window.sessionStorage.getItem(INTERVAL_KEY)));
+        }
+        setWaitingPayment(false);
+      })
+  }
+
   const onMercadopagoClick = () => {
     setWaitingPayment(true);
-    //refreshHandler(order);
+    const intervalId = setInterval(getOrderStatus, ONE_SECOND);
+    window.sessionStorage.setItem(INTERVAL_KEY, intervalId);
   }
 
   return (
@@ -79,8 +95,8 @@ function ActiveDeliveryOrder({order}) {
         <h5 style={{marginTop: 5, marginBottom: 5, marginLeft:10, fontWeight: 'bold'}}>
           <Row>
             <Col md="2">
-              <DeliveryOrderStatusIcon status={order.status}/>
-              {order.status === PENDING_STATUS
+              <DeliveryOrderStatusIcon status={orderStatus}/>
+              {orderStatus === PENDING_STATUS
                 ? (
                   <>{waitingPayment ? '' : <div id={`order${order._id}`} style={{paddingRight: 16}} onClick={onMercadopagoClick}></div>}
                   {showRequestButton
