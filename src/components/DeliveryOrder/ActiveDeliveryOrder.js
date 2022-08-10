@@ -18,7 +18,7 @@
 import React, {useEffect, useState} from "react";
 import SweetAlert from "react-bootstrap-sweetalert";
 
-import { map, isEmpty, assign, replace } from 'lodash';
+import { map } from 'lodash';
 
 // reactstrap components
 import {
@@ -28,18 +28,67 @@ import {
 import OrderRowMin from "../OrderRow/OrderRowMin";
 import currencyFormatter from '../../utils/currency.formatter';
 import DeliveryOrderStatusIcon from "../DeliveryOrderStatusIcon/DeliveryOrderStatusIcon";
+import deliveryOrderService from "../../services/deliveryOrder.service";
+import paymentsService from "../../services/payments.service";
+
+const PENDING_STATUS = 'pending';
+
+const DEFAULT_WAITING_MINUTES = 30;
 
 function ActiveDeliveryOrder({order}) {
+  const [showReActiveDeliveryDialog, setShowReActiveDeliveryDialog] = useState(false);
+  const [showRequestButton, setShowRequestButton] = useState(true);
+  const [waitingPayment, setWaitingPayment] = useState(false);
 
   const orderList = map(order.orders, (order) => <OrderRowMin key={order.id} order={order} />);
 
+  const reActivateDeliveryOrder = (minutes) => {
+    deliveryOrderService.reActivateDeliveryOrder(order._id, minutes)
+      .then(result => {
+          paymentsService.chackout(result.id, `#order${order._id}`);
+          setShowRequestButton(false);
+          //refreshHandler()
+        });
+  }
+
+  const onMercadopagoClick = () => {
+    setWaitingPayment(true);
+    //refreshHandler(order);
+  }
+
   return (
     <Row>
+      {showReActiveDeliveryDialog ? <SweetAlert
+        input
+        inputType="number"
+        required={true}
+        showCancel
+        defaultValue={DEFAULT_WAITING_MINUTES}
+        title="Tiempo de espera hasta que expire la orden de reparto"
+        confirmBtnText="Confirmar"
+        confirmBtnBsStyle="primary"
+        cancelBtnText="Ahora no"
+        cancelBtnBsStyle="danger"
+        onCancel={() => setShowReActiveDeliveryDialog(false)}
+        onConfirm={(minutes) => {
+          reActivateDeliveryOrder(minutes);
+          setShowReActiveDeliveryDialog(false);
+        }}
+      >Si no encontramos un repartidor antes de que expire el tiempo, te reenbolsaremos el dinero.</SweetAlert> : ''}
       <Col md="12">
         <h5 style={{marginTop: 5, marginBottom: 5, marginLeft:10, fontWeight: 'bold'}}>
           <Row>
             <Col md="2">
               <DeliveryOrderStatusIcon status={order.status}/>
+              {order.status === PENDING_STATUS
+                ? (
+                  <>{waitingPayment ? '' : <div id={`order${order._id}`} style={{paddingRight: 16}} onClick={onMercadopagoClick}></div>}
+                  {showRequestButton
+                    ? <Button className="btn-round btn-sm btn-primary" onClick={() => setShowReActiveDeliveryDialog(true)}>Volver a publicar</Button>
+                    : ''
+                  }</>
+                )
+                : ''}
             </Col>
             <Col md="8" className="text-center">
               <span>{order.name}</span>

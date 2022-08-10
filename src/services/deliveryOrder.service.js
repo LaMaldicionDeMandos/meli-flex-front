@@ -31,6 +31,14 @@ class DeliveryOrderService {
       .then(response => response.data);
   }
 
+  reActivateDeliveryOrder(id, minutes) {
+    return axios.post( `${API_URL}/delivery/${id}/activation`,
+      {expiration_minutes: minutes},
+      { headers: HEADERS({Authorization: sessionService.getToken()})}
+    )
+      .then(response => response.data);
+  }
+
   addOrder(order, deliveryOrderName) {
     const deliveryOrders = this.getDeliveryOrders();
     const deliveryOrder = deliveryOrderName
