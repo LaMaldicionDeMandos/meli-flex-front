@@ -1,0 +1,24 @@
+.tooltip-inner {
+    background-color: black !important;
+    color: white !important;
+}
+.font-icon-red i {
+    border: none !important;
+    color: #e52d27;
+    font-size: 1.7em ;
+    font-weight: bold;
+}
+
+.font-icon-primary i {
+    border: none !important;
+    color: #e14eca;
+    font-size: 1.7em ;
+    font-weight: bold;
+}
+
+.font-icon-green i {
+    border: none !important;
+    color: green;
+    font-size: 1.7em ;
+    font-weight: bold;
+}

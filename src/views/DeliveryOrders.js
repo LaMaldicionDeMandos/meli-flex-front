@@ -16,20 +16,15 @@
 
 */
 
-import { map, isEmpty } from'lodash';
 import React, {useState} from "react";
-import {Col, ListGroup, ListGroupItem, Nav, NavItem, NavLink, Row, TabContent, TabPane} from "reactstrap";
-import CollapsePanel from "../components/CollapsePanel/CollapsePanel";
+import {Nav, NavItem, NavLink, NavLinkw, TabContent, TabPane} from "reactstrap";
 
 import './DeliveryOrders.css';
 
-import deliveryOrderService from '../services/deliveryOrder.service';
-import DeliveryOrder from "../components/DeliveryOrder/DeliveryOrder";
 import NewDeliveryOrders from "./NewDeliveryOrders";
-import SearchingDeliveryOrders from "./SearchingDeliveryOrders";
+import ActiveDeliveryOrders from "./ActiveDeliveryOrders";
 
 const DELIVERY_STATUS_NEW = 'new';
-const DELIVERY_STATUS_SEARCHING = 'searching';
 const DELIVERY_STATUS_ACTIVE = 'active';
 
 function DeliveryOrders() {
@@ -42,21 +37,15 @@ function DeliveryOrders() {
           <NavLink active={deliveryStatusActive === DELIVERY_STATUS_NEW} onClick={() => setDeliveryStatusActive(DELIVERY_STATUS_NEW)}>Nuevas</NavLink>
         </NavItem>
         <NavItem>
-          <NavLink active={deliveryStatusActive === DELIVERY_STATUS_SEARCHING} onClick={() => setDeliveryStatusActive(DELIVERY_STATUS_SEARCHING)}>Buscando delivery</NavLink>
-        </NavItem>
-        <NavItem>
-          <NavLink active={deliveryStatusActive === DELIVERY_STATUS_ACTIVE} onClick={() => setDeliveryStatusActive(DELIVERY_STATUS_ACTIVE)}>Repartiendo</NavLink>
+          <NavLink active={deliveryStatusActive === DELIVERY_STATUS_ACTIVE} onClick={() => setDeliveryStatusActive(DELIVERY_STATUS_ACTIVE)}>Activas</NavLink>
         </NavItem>
       </Nav>
       <TabContent activeTab={deliveryStatusActive}>
         <TabPane tabId={DELIVERY_STATUS_NEW}>
           <NewDeliveryOrders />
         </TabPane>
-        <TabPane tabId={DELIVERY_STATUS_SEARCHING}>
-          <SearchingDeliveryOrders />
-        </TabPane>
         <TabPane tabId={DELIVERY_STATUS_ACTIVE}>
-          Repartiendo
+          <ActiveDeliveryOrders />
         </TabPane>
       </TabContent>
     </div>

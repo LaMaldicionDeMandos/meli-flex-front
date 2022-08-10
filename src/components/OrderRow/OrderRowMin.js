@@ -32,7 +32,7 @@ const SHIPPING_DATE_FORMATTER = new Intl.DateTimeFormat('es-AR', {
   month: 'long',
   day: 'numeric'})
 
-function OrderRow({order, deleteOrderHandler = (order) => {}}) {
+function OrderRow({order, deleteOrderHandler}) {
   const itemList = _.map(order.order_items, (item) => {
     return (<OrderItemMin key={item.item.id} item={item} />);
   });
@@ -49,7 +49,11 @@ function OrderRow({order, deleteOrderHandler = (order) => {}}) {
                 </label>
               </Col>
               <Col md="6" className="text-right">
-                <button className="btn-sm btn-link btn-danger align-self-center" onClick={() => deleteOrderHandler(order)}><i className="zmdi zmdi-delete"></i></button>
+                {deleteOrderHandler
+                  ? (<button className="btn-sm btn-link btn-danger align-self-center" onClick={() => deleteOrderHandler(order)}>
+                    <i className="zmdi zmdi-delete"></i>
+                  </button>)
+                  : ''}
               </Col>
             </Row>
           </CardHeader>

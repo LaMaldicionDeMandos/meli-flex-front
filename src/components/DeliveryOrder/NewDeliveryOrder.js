@@ -32,7 +32,7 @@ import paymentsService from '../../services/payments.service';
 
 const DEFAULT_WAITING_MINUTES = 30;
 
-function DeliveryOrder({order, refreshHandler = (order) => {}}) {
+function NewDeliveryOrder({order, refreshHandler = (order) => {}}) {
   const [deliveryCost, setDeliveryCost] = useState();
   const [orders, setOrders] = useState(order.orders);
   const [showRequestButton, setShowRequestButton] = useState(true);
@@ -107,4 +107,4 @@ function DeliveryOrder({order, refreshHandler = (order) => {}}) {
   );
 }
 
-export default DeliveryOrder;
+export default NewDeliveryOrder;

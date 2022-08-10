@@ -21,7 +21,7 @@ import React, {useState} from "react";
 import {Card, CardBody, Col, ListGroup, ListGroupItem, Row} from "reactstrap";
 
 import deliveryOrderService from '../services/deliveryOrder.service';
-import DeliveryOrder from "../components/DeliveryOrder/DeliveryOrder";
+import NewDeliveryOrder from "../components/DeliveryOrder/NewDeliveryOrder";
 
 function NewDeliveryOrders() {
   const [deliveryOrders, setDeliveryOrders] = useState(deliveryOrderService.getDeliveryOrders());
@@ -33,7 +33,7 @@ function NewDeliveryOrders() {
   const deliveryOrdersList = map(deliveryOrders, (order, index) => {
     return (
       <ListGroupItem key={order.name + index}>
-        <DeliveryOrder  order={order} refreshHandler={refreshHandler} />
+        <NewDeliveryOrder order={order} refreshHandler={refreshHandler} />
       </ListGroupItem>
     )
   });

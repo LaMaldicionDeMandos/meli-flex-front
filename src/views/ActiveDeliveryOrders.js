@@ -21,8 +21,9 @@ import React, {useEffect, useState} from "react";
 import {Card, CardBody, Col, ListGroup, ListGroupItem, Row} from "reactstrap";
 
 import deliveryOrderService from '../services/deliveryOrder.service';
+import ActiveDeliveryOrder from "../components/DeliveryOrder/ActiveDeliveryOrder";
 
-function SearchingDeliveryOrders() {
+function ActiveDeliveryOrders() {
   const [deliveryOrders, setDeliveryOrders] = useState([]);
 
   useEffect(() => {
@@ -31,10 +32,10 @@ function SearchingDeliveryOrders() {
       .catch((e) => console.error(JSON.stringify(e)));
   }, []);
 
-  const deliveryOrdersList = map(deliveryOrders, (order) => {
+  const deliveryOrdersList = map(deliveryOrders, (order, index) => {
     return (
-      <ListGroupItem key={order._id}>
-        {order.name}
+      <ListGroupItem key={order.name + index}>
+        <ActiveDeliveryOrder order={order} />
       </ListGroupItem>
     )
   });
@@ -58,4 +59,4 @@ function SearchingDeliveryOrders() {
   );
 }
 
-export default SearchingDeliveryOrders;
+export default ActiveDeliveryOrders;
