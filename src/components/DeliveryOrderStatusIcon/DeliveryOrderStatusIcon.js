@@ -39,7 +39,7 @@ const STATE = {
   }
 }
 
-function DeliveryOrderStatusIcon({status}) {
+function DeliveryOrderStatusIcon({status, children}) {
   const [tooltipOpen, setTooltipOpen] = useState(false);
 
   const currentState = STATE[status];
@@ -58,6 +58,7 @@ function DeliveryOrderStatusIcon({status}) {
       </Tooltip>
     </span>
     <label className="title-row">{currentState.explanation}</label>
+    {children}
     </>
 
   );

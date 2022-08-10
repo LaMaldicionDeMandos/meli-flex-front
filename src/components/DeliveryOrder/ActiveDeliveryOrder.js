@@ -15,10 +15,13 @@
 * The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
 
 */
-import React, {useEffect, useState} from "react";
+import React, {useState} from "react";
+
 import SweetAlert from "react-bootstrap-sweetalert";
 
 import { map } from 'lodash';
+import moment from 'moment';
+import 'moment/locale/es';
 
 // reactstrap components
 import {
@@ -32,10 +35,16 @@ import deliveryOrderService from "../../services/deliveryOrder.service";
 import paymentsService from "../../services/payments.service";
 
 const PENDING_STATUS = 'pending';
+const PAID_STATUS = 'paid';
 
 const DEFAULT_WAITING_MINUTES = 30;
 const ONE_SECOND = 1000;
 const INTERVAL_KEY = 'activeDeliveryOrderInterval';
+
+function TimeRemaining({time}) {
+  const duration = moment.duration(time, 'seconds');
+  return 'Expira ' + duration.locale('es').humanize(true);
+}
 
 function ActiveDeliveryOrder({order}) {
   const [orderStatus, setOrderStatus] = useState(order.status);
@@ -59,7 +68,7 @@ function ActiveDeliveryOrder({order}) {
       .then(result => {
         console.log(`Order status ${result.status}`);
         setOrderStatus(result.status);
-        if (result.status === 'paid') {
+        if (result.status === PAID_STATUS) {
           clearInterval(Number.parseInt(window.sessionStorage.getItem(INTERVAL_KEY)));
         }
         setWaitingPayment(false);
@@ -94,8 +103,10 @@ function ActiveDeliveryOrder({order}) {
       <Col md="12">
         <h5 style={{marginTop: 5, marginBottom: 5, marginLeft:10, fontWeight: 'bold'}}>
           <Row>
-            <Col md="2">
-              <DeliveryOrderStatusIcon status={orderStatus}/>
+            <Col md="3">
+              <DeliveryOrderStatusIcon status={orderStatus}>
+                {orderStatus === PAID_STATUS ? (<label className="title-row" style={{marginLeft: 6, fontWeight: 'normal'}}><TimeRemaining time={order.ttl}/></label>) : ''}
+              </DeliveryOrderStatusIcon>
               {orderStatus === PENDING_STATUS
                 ? (
                   <>{waitingPayment ? '' : <div id={`order${order._id}`} style={{paddingRight: 16}} onClick={onMercadopagoClick}></div>}
@@ -106,7 +117,7 @@ function ActiveDeliveryOrder({order}) {
                 )
                 : ''}
             </Col>
-            <Col md="8" className="text-center">
+            <Col md="7" className="text-center">
               <span>{order.name}</span>
             </Col>
             <Col md="2" className="">
