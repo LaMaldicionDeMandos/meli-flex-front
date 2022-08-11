@@ -19,35 +19,87 @@
 import { map, isEmpty } from'lodash';
 import React, {useEffect, useState} from "react";
 import {Card, CardBody, Col, ListGroup, ListGroupItem, Row} from "reactstrap";
+import NotificationAlert from "react-notification-alert";
+import SweetAlert from "react-bootstrap-sweetalert";
+import alert from './../utils/alert';
 
 import deliveryOrderService from '../services/deliveryOrder.service';
 import ActiveDeliveryOrder from "../components/DeliveryOrder/ActiveDeliveryOrder";
 
-function ActiveDeliveryOrders() {
-  const [deliveryOrders, setDeliveryOrders] = useState([]);
+import { filter } from 'lodash';
 
-  useEffect(() => {
+function ActiveDeliveryOrders() {
+  const notificationAlertRef = React.useRef(null);
+  const [deliveryOrders, setDeliveryOrders] = useState([]);
+  const [orderToDelete, setOrderToDelete] = useState();
+
+  const showErrorAlert = (message, place = 'tc') => {
+    alert(notificationAlertRef, message, 'danger', 'icon-alert-circle-exc');
+  }
+
+  const findAllSearching = () => {
     deliveryOrderService.findAllSearching()
       .then((orders) => setDeliveryOrders(orders))
       .catch((e) => console.error(JSON.stringify(e)));
-  }, []);
+  };
+
+  const deleteOrder = (order) => {
+    deliveryOrderService.deleteDeliveryOrder(order)
+      .then(result => {
+        if (result.ok === 'ok') {
+          setDeliveryOrders(filter(deliveryOrders, (or) => or._id !== order._id));
+        } else {
+          onDeleteError('La orden ya fue aceptada, no puede borrarse.');
+        }
+      })
+      .catch(e => {
+        onDeleteError('Hubo un problema y no pudimos borrar la orden, intenta nuevamente más tarde.');
+      }) ;
+  }
+
+  const onDeleteOrder = (order) => {
+    setOrderToDelete(order);
+  }
+
+  const onDeleteError = (message) => {
+    showErrorAlert(message);
+    findAllSearching();
+  }
+
+  useEffect(findAllSearching, []);
 
   const deliveryOrdersList = map(deliveryOrders, (order, index) => {
     return (
       <ListGroupItem key={order.name + index}>
-        <ActiveDeliveryOrder order={order} />
+        <ActiveDeliveryOrder order={order} deleteHandler={onDeleteOrder}/>
       </ListGroupItem>
     )
   });
 
   return (
     <div className="content">
+      <div className="react-notification-alert-container">
+        <NotificationAlert ref={notificationAlertRef} />
+      </div>
+      {orderToDelete ? <SweetAlert
+        showCancel
+        title={`¿Borrar la orden ${orderToDelete.name}?`}
+        confirmBtnText="Confirmar"
+        confirmBtnBsStyle="primary"
+        cancelBtnText="Ahora no"
+        cancelBtnBsStyle="danger"
+        onCancel={() => setOrderToDelete(undefined)}
+        onConfirm={() => {
+          deleteOrder(orderToDelete);
+          setOrderToDelete(undefined);
+        }}
+      /> : ''}
       <Card>
         <CardBody>
           { !isEmpty(deliveryOrdersList)
             ? (<Row>
               <Col md="12">
-                <h5 className="title">Ordenes de reparto en busqueda</h5>
+                <h5 className="title">Ordenes de reparto activas</h5>
                 <ListGroup>
                   {deliveryOrdersList}
                 </ListGroup>

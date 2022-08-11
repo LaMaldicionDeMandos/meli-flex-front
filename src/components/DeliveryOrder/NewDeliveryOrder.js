@@ -59,7 +59,7 @@ function NewDeliveryOrder({order, refreshHandler = (order) => {}}) {
   }
 
   const onMercadopagoClick = () => {
-    deliveryOrderService.deleteDeliveryOrder(order);
+    deliveryOrderService.deleteNewDeliveryOrder(order);
     refreshHandler(order);
   }
 

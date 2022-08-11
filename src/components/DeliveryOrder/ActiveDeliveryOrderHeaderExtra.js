@@ -1,6 +1,6 @@
 import DeliveryOrderStatusIcon from "../DeliveryOrderStatusIcon/DeliveryOrderStatusIcon";
 import SweetAlert from "react-bootstrap-sweetalert";
-import {Button, Row} from "reactstrap";
+import {Button} from "reactstrap";
 import React, {useState} from "react";
 
 import moment from 'moment';
@@ -20,7 +20,7 @@ function TimeRemaining({time}) {
   return time > 0 ? 'Expira ' + duration.locale('es').humanize(true) : '';
 }
 
-function ActiveDeliveryOrderHeaderExtra({order, status, changeStatusHandler = () => {}}) {
+function ActiveDeliveryOrderHeaderExtra({order, status, changeStatusHandler = () => {}, deleteHandler = () => {}}) {
   const [waitingPayment, setWaitingPayment] = useState(false);
   const [showReActiveDeliveryDialog, setShowReActiveDeliveryDialog] = useState(false);
   const [showRequestButton, setShowRequestButton] = useState(true);
@@ -75,12 +75,20 @@ function ActiveDeliveryOrderHeaderExtra({order, status, changeStatusHandler = ()
     else return workingHeaderExtra();
   }
 
+  const onDelete = () => {
+    deleteHandler(order);
+  }
+
   const pendingHeaderExtra = () => {
     return (<>{waitingPayment
       ? ''
       : <div id={`order${order._id}`} style={{paddingRight: 16}} onClick={onMercadopagoClick}></div>}
       {showRequestButton
-        ? <Button className="btn-round btn-sm btn-primary" onClick={() => setShowReActiveDeliveryDialog(true)}>Volver a publicar</Button>
+        ? (
+          <>
+            <Button className="btn-round btn-sm btn-primary" onClick={() => setShowReActiveDeliveryDialog(true)}>Volver a publicar</Button>
+            <Button className="btn-round btn-sm btn-danger" onClick={onDelete}><i className="tim-icons icon-trash-simple"></i></Button>
+          </>)
         : ''
       }</>);
   }

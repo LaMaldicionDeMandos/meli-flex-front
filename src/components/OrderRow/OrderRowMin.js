@@ -51,7 +51,7 @@ function OrderRow({order, deleteOrderHandler}) {
               <Col md="6" className="text-right">
                 {deleteOrderHandler
                   ? (<button className="btn-sm btn-link btn-danger align-self-center" onClick={() => deleteOrderHandler(order)}>
-                    <i className="zmdi zmdi-delete"></i>
+                    <i className="tim-icons icon-trash-simple"></i>
                   </button>)
                   : ''}
               </Col>

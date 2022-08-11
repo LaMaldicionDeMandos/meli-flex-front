@@ -30,7 +30,7 @@ import OrderRowMin from "../OrderRow/OrderRowMin";
 import currencyFormatter from '../../utils/currency.formatter';
 import ActiveDeliveryOrderHeaderExtra from "./ActiveDeliveryOrderHeaderExtra";
 
-function ActiveDeliveryOrder({order}) {
+function ActiveDeliveryOrder({order, deleteHandler = () => {}}) {
   const [orderStatus, setOrderStatus] = useState(order.status);
 
   const orderList = map(order.orders, (order) => <OrderRowMin key={order.id} order={order} />);
@@ -41,7 +41,7 @@ function ActiveDeliveryOrder({order}) {
         <h5 style={{marginTop: 5, marginBottom: 5, marginLeft:10, fontWeight: 'bold'}}>
           <Row>
             <Col md="3">
-              <ActiveDeliveryOrderHeaderExtra order={order} status={orderStatus} changeStatusHandler={setOrderStatus}/>
+              <ActiveDeliveryOrderHeaderExtra order={order} status={orderStatus} changeStatusHandler={setOrderStatus} deleteHandler={deleteHandler}/>
             </Col>
             <Col md="7" className="text-center">
               <span>{order.name}</span>
